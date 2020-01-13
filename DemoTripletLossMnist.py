@@ -3,10 +3,8 @@ from    tensorflow import keras
 from    tensorflow.keras import datasets, layers, optimizers, models
 from tensorflow.keras.layers import  Input, Flatten, Dense, concatenate,  Dropout
 from    tensorflow.keras import regularizers
-import pathlib
 import datetime
-from tensorflow.keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
-from tripletloss import triplet_loss_adapted_from_tf
+from tripletloss import triplet_loss_adapted_from_tf,triplet_loss_plus_space_max_adapted_from_tf
 import argparse
 from tensorflow.keras.datasets import mnist
 import os
@@ -145,7 +143,7 @@ model.summary()
 
 model.compile(
         # loss=tfa.losses.TripletSemiHardLoss(),
-        loss=triplet_loss_adapted_from_tf,
+        loss=triplet_loss_plus_space_max_adapted_from_tf,
         optimizer=keras.optimizers.Adam(0.001),
         metrics=['accuracy'])
 

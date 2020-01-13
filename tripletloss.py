@@ -177,6 +177,7 @@ def triplet_loss_plus_space_max_adapted_from_tf(y_true, y_pred):
 
     # Build pairwise squared distance matrix.
     pdist_matrix = pairwise_distance(embeddings, squared=True)
+    sum_all = tf.math.reduce_euclidean_norm(pdist_matrix)
     # Build pairwise binary adjacency matrix.
     adjacency = math_ops.equal(labels, array_ops.transpose(labels))
     # Invert so we can select negatives only.
@@ -234,6 +235,6 @@ def triplet_loss_plus_space_max_adapted_from_tf(y_true, y_pred):
 
     ###n cal hash distance each other
 
-
+    semi_hard_triplet_loss_distance = semi_hard_triplet_loss_distance + 1./sum_all
 
     return semi_hard_triplet_loss_distance
