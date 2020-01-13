@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Split the data and generate the train and test set')
-parser.add_argument('BATCH_SIZE', help='the BATCH_SIZE', nargs='?',default=128, type=int)
+parser.add_argument('BATCH_SIZE', help='the BATCH_SIZE', nargs='?',default=256, type=int)
 
 args = parser.parse_args()
 BATCH_SIZE = args.BATCH_SIZE
@@ -199,4 +199,4 @@ plt.title('Training and Validation Loss')
 plt.xlabel('epoch')
 plt.show()
 
-plt.savefig('trainlogs_tripletloss.png')
+plt.savefig('trainlogs_tripletloss_space.png')
