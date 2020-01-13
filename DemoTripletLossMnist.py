@@ -11,6 +11,8 @@ import argparse
 from tensorflow.keras.datasets import mnist
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
 parser = argparse.ArgumentParser(description='Split the data and generate the train and test set')
 parser.add_argument('BATCH_SIZE', help='the BATCH_SIZE', nargs='?',default=32, type=int)
 
@@ -22,23 +24,6 @@ def check_folder(dir_name):
         os.makedirs(dir_name)
     return dir_name
 
-
-def create_base_network(image_input_shape, embedding_size):
-    """
-    Base network to be shared (eq. to feature extraction).
-    """
-    input_image = Input(shape=image_input_shape)
-
-    x = Flatten()(input_image)
-    x = Dense(128, activation='relu')(x)
-    x = Dropout(0.1)(x)
-    x = Dense(128, activation='relu')(x)
-    x = Dropout(0.1)(x)
-    x = Dense(embedding_size)(x)
-
-    base_network = Model(inputs=input_image, outputs=x)
-    plot_model(base_network, to_file='base_network.png', show_shapes=True, show_layer_names=True)
-    return base_network
 
 
 epochs = 25
@@ -195,3 +180,25 @@ history = model.fit(
         validation_data=([x_val, y_val], dummy_gt_val),
         validation_steps=200)
 
+acc = history.history['accuracy']
+
+loss = history.history['loss']
+
+plt.figure(figsize=(8, 8))
+plt.subplot(2, 1, 1)
+plt.plot(acc, label='Training Accuracy')
+plt.legend(loc='lower right')
+plt.ylabel('Accuracy')
+plt.ylim([min(plt.ylim()),1])
+plt.title('Training and Validation Accuracy')
+
+plt.subplot(2, 1, 2)
+plt.plot(loss, label='Training Loss')
+plt.legend(loc='upper right')
+plt.ylabel('Cross Entropy')
+plt.ylim([0,1.0])
+plt.title('Training and Validation Loss')
+plt.xlabel('epoch')
+plt.show()
+
+plt.savefig('trainlogs_tripletloss.png')
