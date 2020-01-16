@@ -235,6 +235,6 @@ def triplet_loss_plus_space_max_adapted_from_tf(y_true, y_pred):
 
     ###n cal hash distance each other
 
-    semi_hard_triplet_loss_distance = semi_hard_triplet_loss_distance + 1./sum_all
+    semi_hard_triplet_loss_distance = semi_hard_triplet_loss_distance + 1./sum_all *10
 
     return semi_hard_triplet_loss_distance
