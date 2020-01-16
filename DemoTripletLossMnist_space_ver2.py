@@ -206,7 +206,8 @@ plt.plot(H.history['val_loss'], label='validation loss')
 plt.legend()
 plt.title('Train/validation loss')
 #plt.show()
-plt.savefig('trainlogs_tripletloss_space.png')
+plt.savefig('trainlogs_tripletloss_striplet_distribute'
+            'pace.png')
 
 # Test the network
 
