@@ -178,7 +178,7 @@ plot_model(model, to_file='model.png', show_shapes=True, show_layer_names=True)
 # train session
 opt = Adam(lr=0.0001)  # choose optimiser. RMS is good too!
 
-model.compile(loss=triplet_loss_adapted_from_tf,
+model.compile(loss=triplet_loss_plus_space_max_adapted_from_tf,
               optimizer=opt)
 
 filepath = "semiH_trip_MNIST_v13_ep{epoch:02d}_BS%d.hdf5" % BATCH_SIZE
@@ -206,7 +206,7 @@ plt.plot(H.history['val_loss'], label='validation loss')
 plt.legend()
 plt.title('Train/validation loss')
 #plt.show()
-plt.savefig('trainlogs_tripletloss.png')
+plt.savefig('trainlogs_tripletloss_space.png')
 
 # Test the network
 
