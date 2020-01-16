@@ -25,6 +25,18 @@ from sklearn.decomposition import PCA
 import os
 import argparse
 
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
+
 
 parser = argparse.ArgumentParser(description='Split the data and generate the train and test set')
 parser.add_argument('BATCH_SIZE', help='the BATCH_SIZE', nargs='?',default=128, type=int)
@@ -130,7 +142,7 @@ def create_base_network(input_shape, embedding_size):
 
 
 
-epochs = 25
+epochs = 10
 train_flag = True  # either     True or False
 
 embedding_size = 64
@@ -169,7 +181,7 @@ opt = Adam(lr=0.0001)  # choose optimiser. RMS is good too!
 model.compile(loss=triplet_loss_adapted_from_tf,
               optimizer=opt)
 
-filepath = "semiH_trip_MNIST_v13_ep{epoch:02d}_BS%d.hdf5" % batch_size
+filepath = "semiH_trip_MNIST_v13_ep{epoch:02d}_BS%d.hdf5" % BATCH_SIZE
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, period=25)
 callbacks_list = [checkpoint]
 
@@ -208,18 +220,17 @@ for layer_target, layer_source in zip(testing_embeddings.layers, model.layers[2]
     layer_target.set_weights(weights)
     del weights
 
-    x_embeddings = testing_embeddings.predict(np.reshape(x_test, (len(x_test), 28, 28, 1)))
-    dict_embeddings = {}
-    dict_gray = {}
-    test_class_labels = np.unique(np.array(y_test))
-
-    pca = PCA(n_components=no_of_components)
-    decomposed_embeddings = pca.fit_transform(x_embeddings)
+x_embeddings = testing_embeddings.predict(np.reshape(x_test, (len(x_test), 28, 28, 1)))
+dict_embeddings = {}
+dict_gray = {}
+test_class_labels = np.unique(np.array(y_test))
+pca = PCA(n_components=no_of_components)
+decomposed_embeddings = pca.fit_transform(x_embeddings)
     #     x_test_reshaped = np.reshape(x_test, (len(x_test), 28 * 28))
-    decomposed_gray = pca.fit_transform(x_embeddings_before_train)
+decomposed_gray = pca.fit_transform(x_embeddings_before_train)
 
-    fig = plt.figure(figsize=(16, 8))
-    for label in test_class_labels:
+fig = plt.figure(figsize=(16, 8))
+for label in test_class_labels:
         decomposed_embeddings_class = decomposed_embeddings[y_test == label]
         decomposed_gray_class = decomposed_gray[y_test == label]
 
@@ -233,4 +244,4 @@ for layer_target, layer_source in zip(testing_embeddings.layers, model.layers[2]
         plt.title('after @%d epochs' % epochs)
         plt.legend()
 
-    plt.show()
+plt.show()
